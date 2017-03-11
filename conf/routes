@@ -1,0 +1,22 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                         controllers.BookController.index()
+POST    /book                     controllers.BookController.addBook()
+GET     /book/:id                 controllers.BookController.getBook(id:Long)
+GET     /books                    controllers.BookController.getBooks()
+GET     /deleteBook/:id           controllers.BookController.deleteBook(id:Long)
+
+POST     /editBook/:id            controllers.BookController.editBook(id:Long)
+
+#POST    /upload                   controllers.BookController.upload()
+
+
+#After reading play 2.5 documentation as i can see there is no built-in mechanism for handling HTTP delete method nor PUT .
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+#GET     /images                     controllers.Assets.at(path="/public", file)
