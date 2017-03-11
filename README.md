@@ -1,3 +1,3 @@
-# Play Java Product with JPA
+# Test from Lynx Compliance on PLAY FRAMEWORK 
 
-This project demonstrate how to create a simple CRUD application with Play, using JPA.
+This project demonstrate how to create a  single page bookstore using Bootstrap CSS, and DataTables JavaScript plugin.
