@@ -37,13 +37,10 @@ public class BookController extends Controller {
         return ok(views.html.index.render());
     }
 
-
-
-
     @Transactional
     public Result addBook() {
-        String fileName=null;
-         String path =null;
+        String fileName = null;
+        String path = null;
         //System.out.println();
 
 //        final String path = "/";
@@ -59,8 +56,8 @@ public class BookController extends Controller {
 //            file.renameTo(new File("public/images/"+t.getTime()));
             UUID fileNameId = UUID.randomUUID();
             String fileExtension = getFileExtension(picture.getFilename());
-            path=fileNameId+"."+fileExtension;
-            file.renameTo(new File("public/images/"+path));
+            path = fileNameId + "." + fileExtension;
+            file.renameTo(new File("public/images/" + path));
 
             OutputStream out = null;
             InputStream filecontent = null;
@@ -70,14 +67,17 @@ public class BookController extends Controller {
         }
 
         Book book = formFactory.form(Book.class).bindFromRequest().get();
-        book.cover=path;
+        System.out.println(book.toString());
+        book.cover = path;
         jpaApi.em().persist(book);
 
         return redirect(routes.BookController.index());
     }
+
     @Transactional
     public Result editBook(Long id) {
         String fileName = null;
+        String fileExtension = "";
         String path = null;
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> picture = body.getFile("picture");
@@ -86,26 +86,28 @@ public class BookController extends Controller {
             String contentType = picture.getContentType();
             File file = picture.getFile();
             System.out.println(contentType);
+            Logger.info(contentType);
             UUID fileNameId = UUID.randomUUID();
-            String fileExtension = getFileExtension(picture.getFilename());
+            fileExtension = getFileExtension(picture.getFilename());
             path = fileNameId + "." + fileExtension;
             file.renameTo(new File("public/images/" + path));
 
         }
-            Book oldbook = jpaApi.em().find(Book.class, id);
-            Book book = formFactory.form(Book.class).bindFromRequest().get();
+        Book oldbook = jpaApi.em().find(Book.class, id);
+        Book book = formFactory.form(Book.class).bindFromRequest().get();
 
-            oldbook.title = book.title;
-            oldbook.author = book.author;
-            oldbook.description = book.description;
-            oldbook.page = book.page;
-            oldbook.cover = path;
-            jpaApi.em().merge(oldbook);
-            return redirect(routes.BookController.index());
+        oldbook.title = book.title;
+        oldbook.author = book.author;
+        oldbook.description = book.description;
+        oldbook.page = book.page;
+        if (fileExtension != "") {oldbook.cover = path;}
+        jpaApi.em().merge(oldbook);
+        return redirect(routes.BookController.index());
 
     }
+
     @Transactional
-    public  Result deleteBook(Long id) {
+    public Result deleteBook(Long id) {
         //id = Long.parseLong(request().getQueryString("id"));
         jpaApi.em().remove(jpaApi.em().find(Book.class, id));
         return redirect(routes.BookController.index());
@@ -118,6 +120,7 @@ public class BookController extends Controller {
         return ok(toJson(books));
 
     }
+
     @Transactional(readOnly = true)
     public Result getBook(Long id1) {
         Book book = jpaApi.em().find(Book.class, id1);
@@ -129,8 +132,7 @@ public class BookController extends Controller {
 
         try {
             return file.substring(file.lastIndexOf(".") + 1);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             return ".jpg";
         }
     }
